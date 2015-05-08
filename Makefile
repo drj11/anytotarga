@@ -1,7 +1,9 @@
 test: targa .PHONY
-	./targa | tgatoppm | pnmtopng > test.png
+	./targa < basn3p04.png | tgatoppm | pnmtopng > test.png
+
 
 targa: main.go
+	go fmt
 	go build
 
 .PHONY:

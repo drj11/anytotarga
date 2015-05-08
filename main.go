@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/binary"
+	"image/png"
 	"log"
 	"os"
 )
@@ -22,21 +23,31 @@ type TARGAHeader struct {
 }
 
 func main() {
+	image, err := png.Decode(os.Stdin)
+	if err != nil {
+		log.Fatal(err)
+	}
+	W := image.Bounds().Max.X
+	H := image.Bounds().Max.Y
+
 	header := TARGAHeader{0, 0, 2,
 		0, 0, 24,
-		0, 0, 16, 16, 24, 1<<5}
-	err := binary.Write(os.Stdout, binary.LittleEndian, header)
-	for i := 0; i < 8; i++ {
-		for j := 0; j < 16; j++ {
-			os.Stdout.Write([]byte{255, 0, 0})
-		}
-	}
-	for i := 0; i < 8; i++ {
-		for j := 0; j < 16; j++ {
-			os.Stdout.Write([]byte{0, 255, 255})
-		}
-	}
+		0, 0, uint16(W), uint16(H), 24, 1 << 5}
+	err = binary.Write(os.Stdout, binary.LittleEndian, header)
 	if err != nil {
-		log.Print("Error: ", err)
+		log.Fatal("Error: ", err)
+	}
+
+	for y := 0; y < W; y++ {
+		for x := 0; x < H; x++ {
+			r, g, b, _ := image.At(x, y).RGBA()
+			rb := byte(float64(r)/257 + 0.5)
+			gb := byte(float64(g)/257 + 0.5)
+			bb := byte(float64(b)/257 + 0.5)
+			_, err = os.Stdout.Write([]byte{bb, gb, rb})
+			if err != nil {
+				log.Fatal("Error: ", err)
+			}
+		}
 	}
 }
