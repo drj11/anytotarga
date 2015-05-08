@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/binary"
+	"image"
 	"image/png"
+	"io"
 	"log"
 	"os"
 )
@@ -27,15 +29,22 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = ToTARGA(os.Stdout, image)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func ToTARGA(w io.Writer, image image.Image) error {
 	W := image.Bounds().Max.X
 	H := image.Bounds().Max.Y
 
 	header := TARGAHeader{0, 0, 2,
 		0, 0, 24,
 		0, 0, uint16(W), uint16(H), 24, 1 << 5}
-	err = binary.Write(os.Stdout, binary.LittleEndian, header)
+	err := binary.Write(os.Stdout, binary.LittleEndian, header)
 	if err != nil {
-		log.Fatal("Error: ", err)
+		return err
 	}
 
 	for y := 0; y < W; y++ {
@@ -46,8 +55,9 @@ func main() {
 			bb := byte(float64(b)/257 + 0.5)
 			_, err = os.Stdout.Write([]byte{bb, gb, rb})
 			if err != nil {
-				log.Fatal("Error: ", err)
+				return err
 			}
 		}
 	}
+	return nil
 }
