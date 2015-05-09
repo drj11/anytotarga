@@ -1,7 +1,8 @@
 package main
 
 import (
-	"image/png"
+	"image"
+	_ "image/png"
 	"log"
 	"os"
 
@@ -9,7 +10,7 @@ import (
 )
 
 func main() {
-	image, err := png.Decode(os.Stdin)
+	image, _, err := image.Decode(os.Stdin)
 	if err != nil {
 		log.Fatal(err)
 	}
