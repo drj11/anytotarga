@@ -1,5 +1,5 @@
 test: targa .PHONY
-	./targa < basn3p04.png | tgatoppm | pnmtopng > test.png
+	./anytotarga < basn3p04.png | tgatoppm | pnmtopng > test.png
 
 
 targa: main.go
