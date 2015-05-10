@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"unpublished/anytotarga/targa"
+	"github.com/drj11/anytotarga/targa"
 )
 
 func main() {
