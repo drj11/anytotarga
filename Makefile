@@ -1,9 +1,7 @@
-test: targa .PHONY
+test.png: anytotarga
 	./anytotarga < basn3p04.png | tgatoppm | pnmtopng > test.png
 
 
-targa: main.go
+anytotarga: main.go
 	go fmt
 	go build
-
-.PHONY:
